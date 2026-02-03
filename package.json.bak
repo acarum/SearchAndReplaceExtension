@@ -5,8 +5,8 @@
   "description": "Extension for Mendix Studio Pro",
   "license": "MIT",
   "scripts": {
-    "build": "tsc --noEmit && node build-extension.mjs",
-    "build:dev": "tsc --noEmit && node build-extension.mjs --watch"
+    "build": "node build-extension.mjs",
+    "build:dev": "node build-extension.mjs --watch"
   },
   "dependencies": {
     "@mendix/extensions-api": "^0.5.0-mendix.11.6.0",
@@ -17,7 +17,6 @@
     "@types/node": "^22.13.10",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-    "typescript": "^5.8.2",
     "esbuild": "0.25.5",
     "minimist": "^1.2.8"
   }

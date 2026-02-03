@@ -1,69 +1,62 @@
-import fs from "node:fs/promises"
 import { existsSync as pathExists } from "node:fs";
+import fs from "node:fs/promises";
 
-function extractMendixVersion(version) {
-    const defaultVersion = 11;
-    const match = version.match(/mendix\.(\d+)/);
-    return match ? parseInt(match[1]) : defaultVersion;
-}
+async function ensureExtensionDirectoryExists(appDir, extensionDirectoryName) {
+    if (appDir.trim() !== "" && pathExists(appDir)) {
+        const extDir = `${appDir}/${extensionDirectoryName}`;
 
-async function ensureExtensionFolderExists(appDir, mendixVersion) {
-    const extensionDirName = mendixVersion >= 11 ? 'extensions' : 'webextensions';
-    if(pathExists(appDir)) {
-        const extDir = `${appDir}/${extensionDirName}`
-        if(!pathExists(extDir)) {
-            await fs.mkdir(extDir)
+        if (!pathExists(extDir)) {
+            await fs.mkdir(extDir);
         }
+
         return extDir;
     }
 }
 
 async function copyExtensionAssetsToApplication(appExtensionDirPath, outDir) {
-    const extensionName = outDir.split('/').pop()
-    const deployedExtensionPath = `${appExtensionDirPath}/${extensionName}`
-    
-    if(pathExists(deployedExtensionPath)) {
-        await fs.rm(deployedExtensionPath, {recursive:true, force:true})
+    const extensionName = outDir.split("/").pop();
+    const deployedExtensionPath = `${appExtensionDirPath}/${extensionName}`;
+
+    if (pathExists(deployedExtensionPath)) {
+        await fs.rm(deployedExtensionPath, { recursive: true, force: true });
     }
-    
-    await fs.mkdir(deployedExtensionPath)
-    await fs.cp(outDir, deployedExtensionPath, {recursive:true})
+
+    await fs.mkdir(deployedExtensionPath);
+    await fs.cp(outDir, deployedExtensionPath, { recursive: true });
 }
 
-export const copyToAppPlugin = (appDir, outDir, extensionApiVersion) => ({
-    name: 'copy-to-app',
+export const copyToAppPlugin = (appDir, outDir, extensionDirectoryName) => ({
+    name: "copy-to-app",
     setup(build) {
         build.onEnd(async result => {
             if (!result.errors.length) {
-                const mendixVersion = extractMendixVersion(extensionApiVersion);
-                const appExtensionDirPath = await ensureExtensionFolderExists(appDir, mendixVersion);
-                if(appExtensionDirPath) {
-                    copyExtensionAssetsToApplication(appExtensionDirPath, outDir)
-                }
-                else {
-                    console.error("Could not find Mendix application directory:", appDir)
-                    console.info("Skipping copying the extension to application directory")
+                const appExtensionDirPath = await ensureExtensionDirectoryExists(appDir, extensionDirectoryName);
+
+                if (appExtensionDirPath) {
+                    copyExtensionAssetsToApplication(appExtensionDirPath, outDir);
+                } else {
+                    console.error("Could not find Mendix application directory:", appDir);
+                    console.info("Skipping copying the extension to application directory");
                 }
             }
-        })
+        });
     }
-})
+});
 
-export const copyManifestPlugin = (outDir) => ({
-    name: 'copy-manifest',
+export const copyManifestPlugin = outDir => ({
+    name: "copy-manifest",
     setup(build) {
         build.onEnd(async result => {
-            if(!result.errors.length) {
+            if (!result.errors.length) {
                 try {
-                    await fs.copyFile('src/manifest.json', `${outDir}/manifest.json`)
-                }
-                catch(error) {
-                    console.error('Make sure that manifest.json file is present in src/ folder', error);
+                    await fs.copyFile("src/manifest.json", `${outDir}/manifest.json`);
+                } catch (error) {
+                    console.error("Make sure that manifest.json file is present in src/ folder", error);
                 }
             }
-        })
+        });
     }
-})
+});
 
 export const commonConfig = {
     target: "es2023",
@@ -72,7 +65,7 @@ export const commonConfig = {
     bundle: true,
     splitting: true,
     treeShaking: true,
-    logLevel: 'info',
+    logLevel: "info",
     assetNames: "assets/[ext]/[name]-[hash]",
     external: ["@mendix/component-framework", "@mendix/model-access-sdk"],
     loader: {
@@ -83,5 +76,5 @@ export const commonConfig = {
         ".woff": "file",
         ".woff2": "file"
     },
-    sourcemap: true,
-}
+    sourcemap: true
+};
