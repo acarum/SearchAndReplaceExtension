@@ -5,8 +5,8 @@
             "name": "Launch StudioPro with debugger attached",
             "type": "msedge",
             "useWebView": true,
-            "runtimeExecutable": "C:\\Program Files\\Mendix\\11.3.0.80734\\modeler",
-            "runtimeArgs": ["C:\\Users\\FrankSchutte\\Mendix\\StudioProExtension\\StudioProExtension.mpr", "--enable-extension-development", "--enable-web-extensions"],
+            "runtimeExecutable": "C:\\Program Files\\Mendix\\11.6.3\\modeler\\studiopro.exe",
+            "runtimeArgs": ["C:\\Workspaces\\Mendix\\MxStudioPro_Extensions\\EXFN_Extensions_Web\\StarterKit\\Opcenter EX Starter Kit.mpr", "--enable-extension-development", "--enable-web-extensions"],
             "request": "launch",
             "webRoot": "${workspaceFolder}/dist/TestExtension"
         }

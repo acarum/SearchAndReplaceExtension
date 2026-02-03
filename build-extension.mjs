@@ -3,7 +3,7 @@ import {copyToAppPlugin, copyManifestPlugin, commonConfig} from "./build.helpers
 import parseArgs from "minimist"
 
 const outDir = `dist/TestExtension`
-const appDir = "C:\\Users\\FrankSchutte\\Mendix\\StudioProExtension"
+const appDir = "C:\\Workspaces\\Mendix\\MxStudioPro_Extensions\\EXFN_Extensions_Web\\StarterKit\\"
 const extensionApiVersion = "0.2.4-mendix.11.2.0"
 
 const entryPoints = [
